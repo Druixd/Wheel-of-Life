@@ -160,12 +160,13 @@ function showSavedWinners() {
 }
 function loadWheelOfLife() {
   if (confirm("This will delete all current wheels and load the Wheel of Life collection. Continue?")) {
-    // Clear current wheels
     savedWheels = {};
     
-    // Load the Wheel_of_life.json data
-    fetch('Wheel_of_life.json')
-      .then(response => response.json())
+    fetch('data/Wheel_of_life.json')
+      .then(response => {
+        if (!response.ok) throw new Error("Failed to load Wheel of Life");
+        return response.json();
+      })
       .then(data => {
         savedWheels = {...savedWheels, ...data};
         localStorage.setItem("savedWheels", JSON.stringify(savedWheels));
@@ -174,19 +175,20 @@ function loadWheelOfLife() {
       })
       .catch(error => {
         console.error("Error loading Wheel of Life:", error);
-        alert("Failed to load Wheel of Life collection");
+        alert("Failed to load Wheel of Life collection: " + error.message);
       });
   }
 }
 
 function loadRaceEffects() {
   if (confirm("This will delete all current wheels and load the Race Effects collection. Continue?")) {
-    // Clear current wheels
     savedWheels = {};
     
-    // Load the race-effects.json data
-    fetch('race-effects.json')
-      .then(response => response.json())
+    fetch('data/race-effects.json')
+      .then(response => {
+        if (!response.ok) throw new Error("Failed to load Race Effects");
+        return response.json();
+      })
       .then(data => {
         savedWheels = {...savedWheels, ...data};
         localStorage.setItem("savedWheels", JSON.stringify(savedWheels));
@@ -195,7 +197,7 @@ function loadRaceEffects() {
       })
       .catch(error => {
         console.error("Error loading Race Effects:", error);
-        alert("Failed to load Race Effects collection");
+        alert("Failed to load Race Effects collection: " + error.message);
       });
   }
 }
