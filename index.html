@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Picker Wheel</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+      body {
+        background: #1a1a2e;
+        color: white;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        width: 250px;
+        background: #16213e;
+        padding: 15px;
+        transition: 0.3s;
+        overflow: auto;
+      }
+      .sidebar h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #e94560;
+      }
+      .sidebar button {
+        background: #0f3460;
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 10px;
+        transition: background 0.3s;
+      }
+      .sidebar button:hover {
+        background: #e94560;
+      }
+      .sidebar input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        background: #0f3460;
+        color: white;
+        border: none;
+        border-radius: 4px;
+      }
+      .choice-list {
+        list-style: none;
+        padding: 0;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .choice-list li {
+        background: #0f3460;
+        padding: 8px;
+        margin: 5px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 4px;
+      }
+      .choice-list li button {
+        background: #e94560;
+        width: auto;
+        padding: 5px;
+        margin: 0;
+      }
+
+      /* Main Content */
+      .main {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      canvas {
+        /* border: 3px solid #e94560; */
+        /* background: #16213e; */
+        max-width: 800px;
+        max-height: 800px;
+        width: 80vmin;
+        height: 80vmin;
+      }
+      .spin-btn {
+        position: absolute;
+        background: #e94560;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18px;
+        cursor: pointer;
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        z-index: 10;
+        transition: background 0.3s;
+      }
+      .spin-btn:hover {
+        background: #ff6b81;
+      }
+
+      /* Right Sidebar */
+      .right-sidebar {
+        width: 250px;
+        background: #16213e;
+        padding: 15px;
+        transition: 0.3s;
+        overflow: auto;
+      }
+      .right-sidebar button {
+        width: 100%;
+        margin-top: 10px;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s;
+        border-radius: 4px;
+      }
+
+      .right-sidebar button:hover {
+        opacity: 0.9;
+      }
+      .wheel-list li {
+        background: #0f3460;
+        padding: 8px;
+        margin: 5px 0;
+        cursor: pointer;
+        text-align: center;
+        border-radius: 4px;
+        transition: background 0.3s;
+      }
+      .wheel-list li:hover {
+        background: #e94560;
+      }
+
+      /* Sidebar Toggle */
+      .toggle-btn {
+        position: absolute;
+        top: 10px;
+        background: #0f3460;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        z-index: 10;
+        border-radius: 4px;
+      }
+      .toggle-btn:hover {
+        background: #e94560;
+      }
+      .toggle-left {
+        left: 10px;
+      }
+      .toggle-right {
+        right: 10px;
+      }
+
+      /* CSV Import */
+      #csvFileInput {
+        display: none;
+      }
+      .import-btn {
+        background: #0f3460;
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 4px;
+        transition: background 0.3s;
+      }
+      .import-btn:hover {
+        background: #e94560;
+      }
+      /* Import Dropdown Styles */
+      .import-dropdown {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      .import-dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #0f3460;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        border-radius: 4px;
+        width: 100%;
+      }
+
+      .import-dropdown-content a {
+        color: white;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        transition: background 0.3s;
+      }
+
+      .import-dropdown-content a:hover {
+        background-color: #e94560;
+      }
+
+      .import-dropdown:hover .import-dropdown-content {
+        display: block;
+      }
+
+      /* Text Input Popup Styles */
+      .text-input-popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #16213e;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        z-index: 1000;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        width: 80%;
+        max-width: 500px;
+      }
+
+      .text-input-popup textarea {
+        width: 100%;
+        height: 200px;
+        margin: 10px 0;
+        padding: 10px;
+        background: #0f3460;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        resize: vertical;
+
+        .saved-winners-popup {
+          display: block;
+        }
+
+        .saved-winners-popup ul {
+          max-height: 300px;
+          overflow-y: auto;
+        }
+
+        .saved-winners-popup li {
+          padding: 8px 0;
+          border-bottom: 1px solid #0f3460;
+        }
+        .duplicate-confirm-popup {
+          display: block;
+        }
+
+        .duplicate-confirm-popup p {
+          margin: 10px 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Left Sidebar (CRUD) -->
+    <div class="sidebar" id="leftSidebar">
+      <h2 style="padding-left: 40px">Manage Choices</h2>
+      <input type="text" id="choiceInput" placeholder="Enter choice" />
+      <button onclick="addChoice()">Add Choice</button>
+      <button
+        onclick="showSavedWinners()"
+        style="margin-top: 20px; background: #2196f3"
+      >
+        View Saved Winners
+      </button>
+
+      <!-- CSV Import -->
+      <div class="import-dropdown">
+        <button class="import-btn">Import CSV ▼</button>
+        <div class="import-dropdown-content">
+          <a href="#" onclick="event.preventDefault(); showTextInputPopup();"
+            >From Text Input</a
+          >
+          <a
+            href="#"
+            onclick="event.preventDefault(); document.getElementById('csvFileInput').click();"
+            >From File</a
+          >
+        </div>
+      </div>
+      <input
+        type="file"
+        id="csvFileInput"
+        accept=".csv"
+        onchange="importCSV(event)"
+        style="display: none"
+      />
+
+      <ul class="choice-list" id="choiceList"></ul>
+    </div>
+
+    <!-- Main Area -->
+    <div class="main">
+      <h2
+        id="currentWheelTitle"
+        style="text-align: center; margin-bottom: 20px; display: none"
+      ></h2>
+      <canvas id="wheelCanvas" width="600" height="600"></canvas>
+      <button class="spin-btn" onclick="spinWheel()">SPIN</button>
+    </div>
+
+    <!-- Right Sidebar (Saved Wheels) -->
+    <div class="right-sidebar" id="rightSidebar">
+      <h2>Saved Wheels</h2>
+      <input type="text" id="wheelName" placeholder="Wheel Name" />
+      <button onclick="saveWheel()">Save Wheel</button>
+      <button onclick="createNewWheel()">New Wheel</button>
+      <button
+        onclick="deleteAllSavedWheels()"
+        style="background-color: #ff4444; color: white"
+      >
+        Delete All Saved Wheels
+      </button>
+      <button
+        onclick="exportAllWheels()"
+        style="background-color: #4caf50; color: white"
+      >
+        Export All Wheels
+      </button>
+      <button
+        onclick="importWheels()"
+        style="background-color: #2196f3; color: white"
+      >
+        Import Wheels
+      </button>
+      <input
+        type="file"
+        id="importWheelsFile"
+        accept=".json"
+        style="display: none"
+        onchange="handleWheelsImport(event)"
+      />
+      <ul class="wheel-list" id="savedWheels"></ul>
+    </div>
+
+    <!-- Sidebar Toggle Buttons -->
+    <button
+      class="toggle-btn toggle-left"
+      onclick="toggleSidebar('leftSidebar')"
+    >
+      ☰
+    </button>
+    <button
+      class="toggle-btn toggle-right"
+      onclick="toggleSidebar('rightSidebar')"
+    >
+      ☰
+    </button>
+
+    <script src="script.js"></script>
+  </body>
+</html>
