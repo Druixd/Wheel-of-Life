@@ -158,6 +158,47 @@ function showSavedWinners() {
   `;
   document.body.appendChild(popup);
 }
+function loadWheelOfLife() {
+  if (confirm("This will delete all current wheels and load the Wheel of Life collection. Continue?")) {
+    // Clear current wheels
+    savedWheels = {};
+    
+    // Load the Wheel_of_life.json data
+    fetch('Wheel_of_life.json')
+      .then(response => response.json())
+      .then(data => {
+        savedWheels = {...savedWheels, ...data};
+        localStorage.setItem("savedWheels", JSON.stringify(savedWheels));
+        updateSavedWheels();
+        alert("Wheel of Life collection loaded successfully!");
+      })
+      .catch(error => {
+        console.error("Error loading Wheel of Life:", error);
+        alert("Failed to load Wheel of Life collection");
+      });
+  }
+}
+
+function loadRaceEffects() {
+  if (confirm("This will delete all current wheels and load the Race Effects collection. Continue?")) {
+    // Clear current wheels
+    savedWheels = {};
+    
+    // Load the race-effects.json data
+    fetch('race-effects.json')
+      .then(response => response.json())
+      .then(data => {
+        savedWheels = {...savedWheels, ...data};
+        localStorage.setItem("savedWheels", JSON.stringify(savedWheels));
+        updateSavedWheels();
+        alert("Race Effects collection loaded successfully!");
+      })
+      .catch(error => {
+        console.error("Error loading Race Effects:", error);
+        alert("Failed to load Race Effects collection");
+      });
+  }
+}
 
 function clearSavedWinners() {
   if (confirm("Are you sure you want to clear all saved winners?")) {
