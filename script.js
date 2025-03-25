@@ -162,9 +162,9 @@ function loadWheelOfLife() {
   if (confirm("This will delete all current wheels and load the Wheel of Life collection. Continue?")) {
     savedWheels = {};
     
-    fetch('data/Wheel_of_life.json')
+    fetch('https://druixd.github.io/Wheel-of-Life/data/Wheel_of_life.json')
       .then(response => {
-        if (!response.ok) throw new Error("Failed to load Wheel of Life");
+        if (!response.ok) throw new Error("Network response was not ok");
         return response.json();
       })
       .then(data => {
@@ -184,9 +184,9 @@ function loadRaceEffects() {
   if (confirm("This will delete all current wheels and load the Race Effects collection. Continue?")) {
     savedWheels = {};
     
-    fetch('data/race-effects.json')
+    fetch('https://druixd.github.io/Wheel-of-Life/data/race-effects.json')
       .then(response => {
-        if (!response.ok) throw new Error("Failed to load Race Effects");
+        if (!response.ok) throw new Error("Network response was not ok");
         return response.json();
       })
       .then(data => {
